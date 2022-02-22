@@ -17,6 +17,8 @@ function Login(props) {
       .then((res) => res.text())
       .then((data) => {
         if (data === "Login successful") {
+          props.setUserName(email);
+          // console.log("Loggin in user: "+props.username);
           props.setAppState(2);
         } else {
           alert(data);
