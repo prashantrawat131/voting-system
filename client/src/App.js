@@ -10,7 +10,6 @@ import CreatePoll from "./components/createpoll";
 function App() {
   const [appState, setAppState] = React.useState(1);
   const [username, setUserName] = useState("-1");
-
   return (
     <div className="App">
 

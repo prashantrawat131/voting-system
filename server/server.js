@@ -8,32 +8,32 @@ const mongoose = require("mongoose");
 const PORT = process.env.PORT || 3001;
 
 //setting up mongoose
-mongoose.connect("mongodb://localhost/votingDB");
-const Schema = mongoose.Schema;
+// mongoose.connect("mongodb://localhost/votingDB");
+// const Schema = mongoose.Schema;
 
 //creating user schema
-const userSchema = new Schema({
-  name: { type: String },
-  email: { type: String },
-  password: { type: String },
-});
-const User = mongoose.model("User", userSchema);
+// const userSchema = new Schema({
+//   name: { type: String },
+//   email: { type: String },
+//   password: { type: String },
+// });
+// const User = mongoose.model("User", userSchema);
 
 //creating polls schema
-const pollScahema = new Schema({
-  creator: { type: String },
-  poll_title: { type: String },
-  option1: { type: String },
-  option2: { type: String },
-  option3: { type: String },
-  option4: { type: String },
-  option1_votes: { type: Number },
-  option2_votes: { type: Number },
-  option3_votes: { type: Number },
-  option4_votes: { type: Number },
-  data: { type: Date, default: Date.now },
-});
-const Poll = mongoose.model("Poll", pollScahema);
+// const pollScahema = new Schema({
+//   creator: { type: String },
+//   poll_title: { type: String },
+//   option1: { type: String },
+//   option2: { type: String },
+//   option3: { type: String },
+//   option4: { type: String },
+//   option1_votes: { type: Number },
+//   option2_votes: { type: Number },
+//   option3_votes: { type: Number },
+//   option4_votes: { type: Number },
+//   date: { type: Date, default: Date.now },
+// });
+// const Poll = mongoose.model("Poll", pollScahema);
 
 //setting up body bodyParser
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -114,6 +114,7 @@ app.get("/getPolls", function (req, res) {
       res.send({ message: "Some error occured" });
     } else {
       if (result) {
+        console.log("Sending: "+result);
         res.send(result);
       } else {
         res.send({ message: "No polls available" });

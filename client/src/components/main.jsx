@@ -1,6 +1,6 @@
 import Homefeed from "./homefeed";
 
-function Main(){
+function Main(props){
     return (
         <div>
             <p>Main Page</p>
