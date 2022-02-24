@@ -23,7 +23,7 @@ function App() {
         <Login setUserName={setUserName} setAppState={setAppState} />
       )}
 
-      {appState === 2 && <Main />}
+      {appState === 2 && <Main username={username}/>}
 
       {appState === 3 && (
         <CreatePoll username={username} setAppState={setAppState} />

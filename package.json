@@ -4,7 +4,7 @@
   "description": "It is a web application for generating polls",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server/server.js",
+    "start": "npm install && nodemon server/server.js",
     "build": "cd client && npm install && npm run build"
   },
   "engines": {

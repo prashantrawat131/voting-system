@@ -12,24 +12,20 @@ function Homefeed(props) {
         if (data.message) {
           alert(data.message);
         } else {
-          console.log("Poll data received: " + JSON.stringify(data));
+          // console.log("Poll data received: " + JSON.stringify(data));
           setPolls(data);
         }
       });
-      setLoadPolls(false);
+    setLoadPolls(false);
   }
-
-
-  // console.log("no. of polls: "+polls[0].name);
 
   return (
     <div>
-      <p>Home feed</p>
-      {
-      polls.forEach((poll) => {
-        <Poll data={poll} />
-      })
-      }
+      {/* <h6>Home feed</h6> */}
+      {polls.map((poll) => {
+        // console.log("Home feed poll: "+JSON.stringify(poll));
+        return <Poll key={poll._id} data={poll} username={props.username}/>;
+      })}
     </div>
   );
 }

@@ -2,44 +2,43 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const bodyParser = require("body-parser");
-const { MongoClient } = require("mongodb");
 const mongoose = require("mongoose");
 
 const PORT = process.env.PORT || 3001;
 
-//setting up mongoose
-// mongoose.connect("mongodb://localhost/votingDB");
-// const Schema = mongoose.Schema;
+// setting up mongoose
+mongoose.connect("mongodb://localhost/votingDB");
+const Schema = mongoose.Schema;
 
-//creating user schema
-// const userSchema = new Schema({
-//   name: { type: String },
-//   email: { type: String },
-//   password: { type: String },
-// });
-// const User = mongoose.model("User", userSchema);
+// creating user schema
+const userSchema = new Schema({
+  name: { type: String },
+  email: { type: String },
+  password: { type: String },
+});
+const User = mongoose.model("User", userSchema);
 
-//creating polls schema
-// const pollScahema = new Schema({
-//   creator: { type: String },
-//   poll_title: { type: String },
-//   option1: { type: String },
-//   option2: { type: String },
-//   option3: { type: String },
-//   option4: { type: String },
-//   option1_votes: { type: Number },
-//   option2_votes: { type: Number },
-//   option3_votes: { type: Number },
-//   option4_votes: { type: Number },
-//   date: { type: Date, default: Date.now },
-// });
-// const Poll = mongoose.model("Poll", pollScahema);
+// creating polls schema
+const pollScahema = new Schema({
+  creator: { type: String },
+  poll_title: { type: String },
+  option1: { type: String },
+  option2: { type: String },
+  option3: { type: String },
+  option4: { type: String },
+  option1_votes: { type: Number },
+  option2_votes: { type: Number },
+  option3_votes: { type: Number },
+  option4_votes: { type: Number },
+  date: { type: Date, default: Date.now },
+});
+const Poll = mongoose.model("Poll", pollScahema);
 
 //setting up body bodyParser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(
-  express.static(path.resolve(__dirname, "../client/build", "index.html"))
+  express.static(path.resolve(__dirname, "../client/build"))
 );
 
 app.listen(PORT, function () {
@@ -123,8 +122,12 @@ app.get("/getPolls", function (req, res) {
   });
 });
 
-app.get("/", function (req, res) {
-  // res.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
-  res.send("Hello");
+app.post("/vote",function(req,res){
+    const {voter_id,poll_id,optionNumber}=req.body;
+    console.log(voter_id,poll_id,optionNumber);
+    res.send("Voted successfully");
+});
 
+app.get("/", function (req, res) {
+  res.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
 });
