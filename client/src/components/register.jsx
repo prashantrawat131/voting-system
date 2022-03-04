@@ -1,5 +1,8 @@
-function Register(props) {
+import Cookies from "universal-cookie";
 
+const cookies=new Cookies();
+
+function Register(props) {
   function registerUser() {
     const userName = document.getElementById("userNameForRegistration").value;
     const email = document.getElementById("userEmailForRegistration").value;
@@ -20,34 +23,51 @@ function Register(props) {
       },
     })
       .then((response) => response.text())
-      .then((data) => console.log("Data:" + data));
+      .then((data) => {
+        if(data==="Registered successfully"){
+          cookies.set("loggedInUserEmail",email);
+        }else{
+          alert(data);
+        }
+      });
   }
 
-  function showLoginPage(){
-    props.setAppState(1);
+  function showLoginPage() {
+    props.setLoginState(1);
   }
 
   return (
-    <div>
-      <label htmlFor="userNameForRegistration">Enter your name</label>
-      <br></br>
-      <input id="userNameForRegistration" />
-      <br></br><br></br>
-      <label htmlFor="userEmailForRegistration">Enter Email</label>
-      <br></br>
-      <input id="userEmailForRegistration" />
-      <br></br><br></br>
-      <label htmlFor="passwordForRegistration">Enter Password</label>
-      <br></br>
-      <input id="passwordForRegistration" />
-      <br></br><br></br>
-      <label htmlFor="confirmPasswordForRegistration">Confirm Password</label>
-      <br></br>
-      <input id="confirmPasswordForRegistration" />
-      <br></br><br></br>
-      <button onClick={registerUser} id="registerButton">Register</button>
-      <br></br><br></br>
-      <p style={{color:"blue"}} onClick={showLoginPage}>Already a user. Wanna Login?</p>
+    <div class="card reg-log-card mx-auto">
+      <div class="card-body">
+        <label htmlFor="userNameForRegistration">Enter your name</label>
+        <br></br>
+        <input id="userNameForRegistration" />
+        <br></br>
+        <br></br>
+        <label htmlFor="userEmailForRegistration">Enter Email</label>
+        <br></br>
+        <input id="userEmailForRegistration" />
+        <br></br>
+        <br></br>
+        <label htmlFor="passwordForRegistration">Enter Password</label>
+        <br></br>
+        <input id="passwordForRegistration" />
+        <br></br>
+        <br></br>
+        <label htmlFor="confirmPasswordForRegistration">Confirm Password</label>
+        <br></br>
+        <input id="confirmPasswordForRegistration" />
+        <br></br>
+        <br></br>
+        <button className="reg-log-button" onClick={registerUser} id="registerButton">
+          Register
+        </button>
+        <br></br>
+        <br></br>
+        <p className="reg-log-link" onClick={showLoginPage}>
+          Already a user. Wanna Login?
+        </p>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,8 @@
+import Cookies from "universal-cookie";
+const cookies=new Cookies();
 function Login(props) {
   function showRegisterPage() {
-    props.setAppState(0);
+    props.setLoginState(0);
   }
 
   function loginUser() {
@@ -17,9 +19,9 @@ function Login(props) {
       .then((res) => res.text())
       .then((data) => {
         if (data === "Login successful") {
-          props.setUserName(email);
+          cookies.set("loggedInUserEmail",email);
+          props.setLoginState(0);
           // console.log("Loggin in user: "+props.username);
-          props.setAppState(2);
         } else {
           alert(data);
         }
@@ -27,21 +29,24 @@ function Login(props) {
   }
 
   return (
-    <div>
-      <label htmlFor="loginEmail">Enter email</label>
-      <br></br>
-      <input id="loginEmail" />
-      <br></br>
-      <br></br>
-      <label htmlFor="loginPassword">Enter Password</label>
-      <br></br>
-      <input id="loginPassword" />
-      <br></br>
-      <br></br>
-      <p onClick={showRegisterPage} style={{ color: "blue" }}>
-        Want to register?
-      </p>
-      <button onClick={loginUser}>Login</button>
+    <div className="card reg-log-card mx-auto">
+      <div className="card-body">
+        <label htmlFor="loginEmail">Enter email</label>
+        <br></br>
+        <input id="loginEmail" />
+        <br></br>
+        <br></br>
+        <label htmlFor="loginPassword">Enter Password</label>
+        <br></br>
+        <input id="loginPassword" />
+        <br></br>
+        <br></br>
+        <button className="reg-log-button" onClick={loginUser}>Login</button>
+        <br /><br />
+        <p className="reg-log-link" onClick={showRegisterPage}>
+          Want to register?
+        </p>
+      </div>
     </div>
   );
 }

@@ -11,6 +11,13 @@ mongoose.connect("mongodb://localhost/votingDB");
 const Schema = mongoose.Schema;
 
 // creating user schema
+const voteSchema = new Schema({
+  poll_id: { type: String },
+  voter_email: { type: String },
+  option_selected: { type: Number, default: -1 },
+});
+const Vote = mongoose.model("Vote", voteSchema);
+
 const userSchema = new Schema({
   name: { type: String },
   email: { type: String },
@@ -37,9 +44,7 @@ const Poll = mongoose.model("Poll", pollScahema);
 //setting up body bodyParser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(
-  express.static(path.resolve(__dirname, "../client/build"))
-);
+app.use(express.static(path.resolve(__dirname, "../client/build")));
 
 app.listen(PORT, function () {
   console.log("Server started at port 3001");
@@ -61,7 +66,7 @@ app.post("/registerUser", function (req, res) {
   const newUser = new User({ name: name, email: email, password: password });
   newUser.save();
   console.log("User Resistered: " + newUser);
-  res.send("Post request accepted");
+  res.send("Registered successfully");
 });
 
 app.post("/loginUser", function (req, res) {
@@ -113,7 +118,7 @@ app.get("/getPolls", function (req, res) {
       res.send({ message: "Some error occured" });
     } else {
       if (result) {
-        console.log("Sending: "+result);
+        // console.log("Sending: " + result);
         res.send(result);
       } else {
         res.send({ message: "No polls available" });
@@ -122,10 +127,106 @@ app.get("/getPolls", function (req, res) {
   });
 });
 
-app.post("/vote",function(req,res){
-    const {voter_id,poll_id,optionNumber}=req.body;
-    console.log(voter_id,poll_id,optionNumber);
-    res.send("Voted successfully");
+app.post("/vote", function (req, res) {
+  const { voter_email, poll_id, optionNumber } = req.body;
+  // console.log(voter_id, poll_id, optionNumber);
+
+  Poll.findById(poll_id, function (err, poll) {
+    if (err) {
+      res.send({ "message": "Voting error" });
+    } else {
+      var update = {};
+
+      if (optionNumber === 1) {
+        update = { option1_votes: poll.option1_votes + 1 };
+      } else if (optionNumber === 2) {
+        update = { option2_votes: poll.option2_votes + 1 };
+      } else if (optionNumber === 3) {
+        update = { option3_votes: poll.option3_votes + 1 };
+      } else {
+        update = { option4_votes: poll.option4_votes + 1 };
+      }
+
+      //updating poll
+      const newPoll=Poll.findByIdAndUpdate(poll._id, update, { new: true });
+
+      //deleting previous vote
+      try {
+        Vote.findOneAndDelete({
+          voter_email: voter_email,
+          poll_id: poll_id,
+        },function(err){
+          if(err){
+            console.log("Error deleting vote: "+err);
+          }else{
+            console.log("Vote deleted successfully");
+          }
+        });
+      } catch (e) {}
+
+      //inserting new vote
+      const newVote = new Vote({
+        voter_email: voter_email,
+        poll_id: poll_id,
+        option_selected: optionNumber,
+      });
+      newVote.save();
+      res.send({message:"Voted successfully"});
+    }
+  });
+});
+
+app.get("/getSelected", function (req, res) {
+  const poll_id = req.query.poll_id;
+  const voter_email = req.query.voter_email;
+
+  // console.log("" + poll_id + "\t" + voter_email);
+
+  Vote.findOne(
+    { voter_email: voter_email, poll_id: poll_id },
+    function (err, result) {
+      if (err) {
+        res.send({ optionSelected: -1 });
+      } else {
+        console.log(JSON.stringify(result));
+        if (result) {
+          res.send({ optionSelected: result.option_selected });
+        } else {
+          res.send({ optionSelected: -1 });
+        }
+      }
+    }
+  );
+});
+
+app.get("/search", function (req, res) {
+  const searchInput = req.query.searchInput;
+  User.find({ name: searchInput }, function (err, result) {
+    if (err) {
+      res.send({ message: "Some error occurred" });
+    } else {
+      if (result) {
+        res.send(result);
+      } else {
+        res.send({ message: "User not found" });
+      }
+    }
+  });
+});
+
+app.get("/getUserPolls", function (req, res) {
+  const personEmail = req.query.personEmail;
+  Poll.find({ creator: personEmail }, function (err, result) {
+    if (err) {
+      res.send({ message: "Some error occurred" });
+    } else {
+      if (result) {
+        res.send(result);
+      } else {
+        res.send("No polls found");
+      }
+    }
+  });
 });
 
 app.get("/", function (req, res) {

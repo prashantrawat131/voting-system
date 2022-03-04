@@ -1,35 +1,36 @@
 import "./App.css";
 import React, { useState } from "react";
-import Header from "./components/partials/header.jsx";
 import Login from "./components/login.jsx";
 import Main from "./components/main.jsx";
 import Register from "./components/register.jsx";
-import Footer from "./components/partials/footer.jsx";
+import Cookies from "universal-cookie";
+// import Footer from "./components/partials/footer.jsx";
 import CreatePoll from "./components/createpoll";
 
 function App() {
-  const [appState, setAppState] = React.useState(1);
-  const [username, setUserName] = useState("-1");
+  const cookies = new Cookies();
+  const [appState, setAppState] = React.useState(2);
+  const [loginState,setLoginState]=React.useState(0);
+
   return (
     <div className="App">
-
-      <Header setAppState={setAppState} />
-
-      {appState === 0 && (
-        <Register username={username} setAppState={setAppState} />
+      {cookies.get("loggedInUserEmail")===undefined && loginState === 0 && (
+        <Register setLoginState={setLoginState} />
       )}
 
-      {appState === 1 && (
-        <Login setUserName={setUserName} setAppState={setAppState} />
+      {cookies.get("loggedInUserEmail")===undefined && loginState === 1 && (
+        <Login setLoginState={setLoginState} />
       )}
 
-      {appState === 2 && <Main username={username}/>}
-
-      {appState === 3 && (
-        <CreatePoll username={username} setAppState={setAppState} />
+      {cookies.get("loggedInUserEmail")!==undefined && appState === 2 && (
+        <Main setAppState={setAppState} />
       )}
 
-      <Footer />
+      {cookies.get("loggedInUserEmail")!==undefined && appState === 3 && (
+        <CreatePoll setAppState={setAppState} />
+      )}
+
+      {/* <Footer /> */}
     </div>
   );
 }
