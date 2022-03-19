@@ -1,8 +1,12 @@
 :root {
-  --dark: #2c3333;
-  --medium: #395b64;
-  --light: #2666cf;
-  --extra_light: #f5f2e7;
+  --c1: #f5f2e7;
+  --c2: #2666cf;
+  --c3: #2666cf;
+  --c4: #2c3333;
+}
+
+#app-name-heading {
+  color: var(--c4);
 }
 
 body {
@@ -12,80 +16,136 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--dark);
+  background-color: var(--c1);
+}
+
+#brand-name{
+  margin-left: 10px;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+.create-poll-div {
+  width: 20%;
+  margin-top: 100px;
+  background-color: var(--c2);
+}
 
-.navbar-buttons {
-  width: 30px;
+.date-div,.time-div{
+  font-size: 10px;
+}
+
+label {
+  color: var(--c1);
+}
+
+.my-buttons {
+  background-color: var(--c3);
+  color: var(--c4);
   text-align: center;
   vertical-align: middle;
+}
+
+.mynav-item {
+  position: relative;
+  align-items: center;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.navbar-buttons {
+  margin-left: 30px;
+}
+
+.option {
+  text-align: start;
+}
+
+.option:hover {
+  cursor: pointer;
+  background-color: green;
+}
+
+.option,.percent-div{
+  margin: 2%;
+  padding: 1%;
+}
+
+.poll {
+  width: 30%;
+  margin: 5%;
+  background-color: var(--c2);
+}
+
+.percent-div{
+  vertical-align: middle;
+  display: inline;
+}
+
+.reg-log-link {
+  color: var(--c1);
+}
+
+.reg-log-link:hover{
+  cursor: pointer;
+  color: silver;
+}
+
+.reg-log-card {
+  margin-top: 100px;
+  width: 20%;
+  background-color: var(--c2);
+}
+
+.refresh-button{
+  background-color: silver;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.right-ended-div{
+  text-align: end;
+}
+
+#search-div {
+  margin: 20px;
+}
+
+#search-button {
+  margin-left: 20px;
+  width: 40px;
+}
+
+#search-button:hover {
+  background-color: var(--c3);
+}
+
+#small-profile-div {
+  margin-top: 20px;
+}
+
+#small-profile-div:hover {
+  background-color: var(--c3);
+}
+
+#small-profile-image {
+  width: 60px;
+}
+
+#small-profile-name {
+  margin-left: 20px;
+  display: inline;
+  color: var(--c4);
 }
 
 .searched-person-image {
   width: 30px;
 }
 
-.reg-log-card {
-  text-align: center;
-  margin-top: 10%;
-  width: 20%;
-  background-color: var(--medium);
-}
-
-.reg-log-button {
-  background-color: #2666cf;
-}
-
-input {
-  background-color: var(--dark);
-  color: var(--extra_light);
-}
-
-label {
-  color: var(--dark);
-}
-
-.reg-log-link {
-  color: var(--dark);
-}
-
-.poll {
-  width: 30%;
-  margin: 5%;
-  background-color: var(--medium);
-}
-
-.option {
-  margin: 2%;
-  padding: 1%;
-  text-align: center;
-}
-
-.option:hover{
-  cursor: pointer;
-  background-color: var(--light);
-}
-
-.create-poll-div{
-  text-align: center;
-  width: 30%;
-  margin-top: 10%;
-  background-color: var(--medium);
-}
-
-#app-name-heading
-{
-  color: var(--extra_light);
-}
-
-.my-buttons{
-  background-color: var(--light);
-  color: var(--extra_light);
-  text-align: center;
-  vertical-align: middle;
+#username{
+  color: blue;
+  font-size: 15px;
 }

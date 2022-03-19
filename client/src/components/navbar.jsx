@@ -1,45 +1,84 @@
+import { useState } from "react";
 import Cookies from "universal-cookie";
-const cookies=new Cookies();
+const cookies = new Cookies();
 
 function Navbar(props) {
   function showPollCreation() {
     props.setAppState(3);
   }
 
-  function logOut(){
-    cookies.remove("loggedInUserEmail");
-    props.setAppState(0);
+  const [navBarState, setNavBarState] = useState(0);
+  const clickedStyle = { color: "#000000" };
+  const noStyle = { color: "silver" };
+
+  function navBarItemOnClick(state) {
+    setNavBarState(state);
+    if (state === 0 || state === 1) {
+      props.setMainState(state);
+    } else if (state === 2) {
+      showPollCreation();
+    } else {
+      props.logOut();
+    }
   }
 
   return (
-    <div className="container ">
-      <div className="row">
-        <div className="col"><h4 id="app-name-heading">Voting System</h4></div>
-        <div className="col">
-          <img
-            onClick={() => props.setMainState(0)}
-            className="navbar-buttons"
-            src="home.svg"
-            alt="home feed"
-          />
-        </div>
-        <div className="col">
-          <img
-            onClick={() => props.setMainState(1)}
-            className="navbar-buttons"
-            src="search.svg"
-            alt="home feed"
-          />
-        </div>
-        <div className="col">
-          <button className="my-buttons" onClick={showPollCreation}>Create poll</button>
-        </div>
-
-        <div className="col">
-          <button className="my-buttons" onClick={logOut}>Logout</button>
-        </div>
+    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <a className="navbar-brand" id="brand-name" href="/">
+        Voting System<p id="username">({cookies.get("loggedInUserEmail")})</p>
+      </a>
+      <button
+        className="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span className="navbar-toggler-icon"></span>
+      </button>
+      <div className="collapse navbar-collapse" id="navbarNav">
+        <ul className="navbar-nav">
+          <li className=" active mynav-item">
+            <p
+              onClick={() => navBarItemOnClick(0)}
+              style={navBarState === 0 ? clickedStyle : noStyle}
+              className="nav-link navbar-buttons"
+            >
+              Home
+            </p>
+          </li>
+          <li className="mynav-item">
+            <p
+              onClick={() => navBarItemOnClick(1)}
+              style={navBarState === 1 ? clickedStyle : noStyle}
+              className="nav-link navbar-buttons"
+            >
+              Search
+            </p>
+          </li>
+          <li className="mynav-item">
+            <p
+              onClick={() => navBarItemOnClick(2)}
+              style={navBarState === 2 ? clickedStyle : noStyle}
+              className="nav-link navbar-buttons"
+            >
+              Create poll
+            </p>
+          </li>
+          <li className="mynav-item">
+            <p
+              onClick={() => navBarItemOnClick(3)}
+              style={navBarState === 3 ? clickedStyle : noStyle}
+              className="nav-link navbar-buttons"
+            >
+              Logout
+            </p>
+          </li>
+        </ul>
       </div>
-    </div>
+    </nav>
   );
 }
 

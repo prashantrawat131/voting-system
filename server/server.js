@@ -63,10 +63,25 @@ app.post("/registerUser", function (req, res) {
   const name = req.body.name;
   const email = req.body.email;
   const password = req.body.password;
-  const newUser = new User({ name: name, email: email, password: password });
-  newUser.save();
-  console.log("User Resistered: " + newUser);
-  res.send("Registered successfully");
+
+  User.findOne({ email: email }, function (err, result) {
+    if (err) {
+      res.send({ message: "Some error occurred while registering." });
+    } else {
+      if (result) {
+        res.send({ message: "Email already present" });
+      } else {
+        const newUser = new User({
+          name: name,
+          email: email,
+          password: password,
+        });
+        newUser.save();
+        console.log("User Registered: " + newUser);
+        res.send({ message: "Registered successfully" });
+      }
+    }
+  });
 });
 
 app.post("/loginUser", function (req, res) {
@@ -108,7 +123,7 @@ app.post("/generatePoll", function (req, res) {
   const newPoll = new Poll(pollData);
   newPoll.save();
 
-  console.log("Poll with data: " + JSON.stringify(pollData));
+  // console.log("Poll with data: " + JSON.stringify(pollData));
   res.send("Poll created");
 });
 
@@ -128,40 +143,83 @@ app.get("/getPolls", function (req, res) {
 });
 
 app.post("/vote", function (req, res) {
-  const { voter_email, poll_id, optionNumber } = req.body;
-  // console.log(voter_id, poll_id, optionNumber);
+  const { voter_email, poll_id, optionNumber, lastSelectedOptionNumber } =
+    req.body;
 
   Poll.findById(poll_id, function (err, poll) {
     if (err) {
-      res.send({ "message": "Voting error" });
+      res.send({ message: "Voting error" });
     } else {
-      var update = {};
+      var update = {
+        option1_votes:
+          optionNumber === 1 ? poll.option1_votes + 1 : poll.option1_votes,
+        option2_votes:
+          optionNumber === 2 ? poll.option2_votes + 1 : poll.option2_votes,
+        option3_votes:
+          optionNumber === 3 ? poll.option3_votes + 1 : poll.option3_votes,
+        option4_votes:
+          optionNumber === 4 ? poll.option4_votes + 1 : poll.option4_votes,
+      };
 
-      if (optionNumber === 1) {
-        update = { option1_votes: poll.option1_votes + 1 };
-      } else if (optionNumber === 2) {
-        update = { option2_votes: poll.option2_votes + 1 };
-      } else if (optionNumber === 3) {
-        update = { option3_votes: poll.option3_votes + 1 };
-      } else {
-        update = { option4_votes: poll.option4_votes + 1 };
-      }
+      var update = {
+        option1_votes:
+          lastSelectedOptionNumber === 1
+            ? update.option1_votes - 1
+            : update.option1_votes,
+        option2_votes:
+          lastSelectedOptionNumber === 2
+            ? update.option2_votes - 1
+            : update.option2_votes,
+        option3_votes:
+          lastSelectedOptionNumber === 3
+            ? update.option3_votes - 1
+            : update.option3_votes,
+        option4_votes:
+          lastSelectedOptionNumber === 4
+            ? update.option4_votes - 1
+            : update.option4_votes,
+      };
+
+      // if (optionNumber === 1) {
+      //   update = { option1_votes: poll.option1_votes + 1 };
+      // } else if (optionNumber === 2) {
+      //   update = { option2_votes: poll.option2_votes + 1 };
+      // } else if (optionNumber === 3) {
+      //   update = { option3_votes: poll.option3_votes + 1 };
+      // } else {
+      //   update = { option4_votes: poll.option4_votes + 1 };
+      // }
 
       //updating poll
-      const newPoll=Poll.findByIdAndUpdate(poll._id, update, { new: true });
+      Poll.findByIdAndUpdate(
+        poll._id,
+        update,
+        { new: true },
+        function (err, doc, result) {
+          if (err) {
+            // console.log("Poll update unsuccessful\rErr:" + err);
+          } else {
+            // console.log("Poll update successfull");
+            // console.log("Doc: " + doc);
+          }
+        }
+      );
 
       //deleting previous vote
       try {
-        Vote.findOneAndDelete({
-          voter_email: voter_email,
-          poll_id: poll_id,
-        },function(err){
-          if(err){
-            console.log("Error deleting vote: "+err);
-          }else{
-            console.log("Vote deleted successfully");
+        Vote.findOneAndDelete(
+          {
+            voter_email: voter_email,
+            poll_id: poll_id,
+          },
+          function (err) {
+            if (err) {
+              console.log("Error deleting vote: " + err);
+            } else {
+              console.log("Vote deleted successfully");
+            }
           }
-        });
+        );
       } catch (e) {}
 
       //inserting new vote
@@ -171,7 +229,7 @@ app.post("/vote", function (req, res) {
         option_selected: optionNumber,
       });
       newVote.save();
-      res.send({message:"Voted successfully"});
+      res.send({ message: "Voted successfully" });
     }
   });
 });
@@ -188,7 +246,7 @@ app.get("/getSelected", function (req, res) {
       if (err) {
         res.send({ optionSelected: -1 });
       } else {
-        console.log(JSON.stringify(result));
+        // console.log(JSON.stringify(result));
         if (result) {
           res.send({ optionSelected: result.option_selected });
         } else {
@@ -225,6 +283,18 @@ app.get("/getUserPolls", function (req, res) {
       } else {
         res.send("No polls found");
       }
+    }
+  });
+});
+
+app.get("/getPoll", function (req, res) {
+  const poll_id = req.query.poll_id;
+  console.log("Poll id:" + poll_id);
+  Poll.findById(poll_id, function (err, poll) {
+    if (err || !poll) {
+      res.send({ message: "Error" });
+    } else {
+      res.send(poll);
     }
   });
 });

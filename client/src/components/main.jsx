@@ -10,7 +10,7 @@ function Main(props){
 
     return (
         <div>
-            <Navbar setMainState={setMainState} setAppState={props.setAppState}/>
+            <Navbar setMainState={setMainState} setAppState={props.setAppState} logOut={props.logOut}/>
             {/* <p>Main Page</p> */}
             {mainState===0 && <Homefeed/>}
 

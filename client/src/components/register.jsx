@@ -1,15 +1,28 @@
 import Cookies from "universal-cookie";
 
-const cookies=new Cookies();
+const cookies = new Cookies();
 
 function Register(props) {
   function registerUser() {
     const userName = document.getElementById("userNameForRegistration").value;
     const email = document.getElementById("userEmailForRegistration").value;
     const password = document.getElementById("passwordForRegistration").value;
+    const confirmPassword = document.getElementById(
+      "confirmPasswordForRegistration"
+    ).value;
 
     console.log("User name: " + userName);
     // alert(userName+"\t"+email+"\t"+password);
+
+    if (!userName || !email || !password || !confirmPassword) {
+      alert("PLease fill all the fields");
+      return;
+    }
+
+    if (confirmPassword !== password) {
+      alert("Confirm password not matching. Please retry");
+      return;
+    }
 
     fetch("/registerUser", {
       method: "POST",
@@ -22,12 +35,14 @@ function Register(props) {
         "Content-type": "application/json;charset=UTF-8",
       },
     })
-      .then((response) => response.text())
+      .then((response) => response.json())
       .then((data) => {
-        if(data==="Registered successfully"){
-          cookies.set("loggedInUserEmail",email);
-        }else{
-          alert(data);
+        if (data.message === "Registered successfully") {
+          cookies.set("loggedInUserEmail", email);
+          props.setLoginState(1);
+          props.setAppState(2);
+        } else {
+          alert(data.message);
         }
       });
   }
@@ -41,32 +56,35 @@ function Register(props) {
       <div class="card-body">
         <label htmlFor="userNameForRegistration">Enter your name</label>
         <br></br>
-        <input id="userNameForRegistration" />
-        <br></br>
+        <input className="form-control" id="userNameForRegistration" />
         <br></br>
         <label htmlFor="userEmailForRegistration">Enter Email</label>
         <br></br>
-        <input id="userEmailForRegistration" />
-        <br></br>
+        <input className="form-control" id="userEmailForRegistration" />
         <br></br>
         <label htmlFor="passwordForRegistration">Enter Password</label>
         <br></br>
-        <input id="passwordForRegistration" />
-        <br></br>
+        <input className="form-control" id="passwordForRegistration" />
         <br></br>
         <label htmlFor="confirmPasswordForRegistration">Confirm Password</label>
         <br></br>
-        <input id="confirmPasswordForRegistration" />
+        <input className="form-control" id="confirmPasswordForRegistration" />
         <br></br>
-        <br></br>
-        <button className="reg-log-button" onClick={registerUser} id="registerButton">
-          Register
-        </button>
-        <br></br>
-        <br></br>
-        <p className="reg-log-link" onClick={showLoginPage}>
-          Already a user. Wanna Login?
-        </p>
+
+        <div className="right-ended-div">
+          <button
+            className="btn btn-warning"
+            onClick={registerUser}
+            id="registerButton"
+          >
+            Register
+          </button>
+          <br />
+          <br />
+          <p className="reg-log-link" onClick={showLoginPage}>
+            Already a user. Wanna Login?
+          </p>
+        </div>
       </div>
     </div>
   );

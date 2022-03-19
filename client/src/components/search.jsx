@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Person from "./person";
-import Poll from "./poll";
+import Sprofile from "./sprofile";
+import Profile from "./profile";
 
 function Search(props) {
   const [peopleList, setPeopleList] = useState([]);
@@ -13,10 +13,15 @@ function Search(props) {
     //chaning state to show user profile
     setSearchState(1);
 
-    console.log("Saving data: " + peopleList.find(person=> person.email === personEmail));
+    console.log(
+      "Saving data: " +
+        peopleList.find((person) => person.email === personEmail)
+    );
 
     //setting select persons data
-    setSelectedPersonData(peopleList.find(person=> person.email === personEmail));
+    setSelectedPersonData(
+      peopleList.find((person) => person.email === personEmail)
+    );
 
     //searching for polls and setting them for the selected person
     fetch("/getUserPolls?personEmail=" + personEmail)
@@ -45,16 +50,25 @@ function Search(props) {
       });
   }
 
+  function goToSearch() {
+    setSearchState(0);
+  }
+
   return (
-    <div>
+    <div id="search-div">
       {searchState === 0 && (
         <div>
           <input type="text" id="search_input" />
-          <img src="./search.svg" alt="Search button" onClick={performSearch} />
+          <img
+            id="search-button"
+            src="./search.svg"
+            alt="Search button"
+            onClick={performSearch}
+          />
 
           {peopleList.map((person) => {
             return (
-              <Person
+              <Sprofile
                 goToProfilePage={goToProfilePage}
                 personEmail={person.email}
                 personName={person.name}
@@ -67,18 +81,12 @@ function Search(props) {
       )}
 
       {searchState === 1 && (
-        <div>
-          {selectedPersonPolls.length === 0 && <p>Polls not found</p>}
-
-          <p>{selectedPersonData.name}</p>
-          <p>{selectedPersonData.email}</p>
-
-          {selectedPersonPolls.map((poll) => {
-            return (
-              <Poll key={poll._id} data={poll} username={props.username} />
-            );
-          })}
-        </div>
+        <Profile
+          goToSearch={goToSearch}
+          selectedPersonData={selectedPersonData}
+          selectedPersonPolls={selectedPersonPolls}
+          setSelectedPersonPolls={setSelectedPersonPolls}
+        />
       )}
     </div>
   );

@@ -1,8 +1,5 @@
 import { useState } from "react";
-import Poll from "./poll";
-import Cookies from "universal-cookie";
-
-const cookies=new Cookies();
+import Polllist from "./polllist";
 
 function Homefeed(props) {
   //it is true when the polls are need to be loaded
@@ -24,34 +21,26 @@ function Homefeed(props) {
     setLoadPolls(false);
   }
 
-  // function refreshPoll(newPollData) {
-  //   console.log("Resfresh: "+JSON.stringify(newPollData));
-  //   const newPolls = polls;
 
-  //   newPolls.forEach((value, index, arr) => {
-  //     if (value._id === newPollData._id) {
-  //       value=newPollData;
-  //     }
-  //   });
-
-  //   setPolls(newPolls);
-  //   // alert(JSON.stringify(polls));
-  // }
 
   return (
     <div>
+      {/* <p>{JSON.stringify(polls)}</p> */}
       {/* <h6>Home feed</h6> */}
-      {polls.map((poll) => {
+      {/* {polls.map((poll) => {
         // console.log("Home feed poll: "+JSON.stringify(poll));
         return (
           <Poll
             // refreshPoll={refreshPoll}
             key={poll._id}
             data={poll}
+            setPolls={setPolls}
+            refreshPoll={refreshPoll}
             username={cookies.get("loggedInUserEmail")}
           />
         );
-      })}
+      })} */}
+      <Polllist list={polls} setList={setPolls}/>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import Cookies from "universal-cookie";
-const cookies=new Cookies();
+const cookies = new Cookies();
 function Login(props) {
   function showRegisterPage() {
     props.setLoginState(0);
@@ -8,6 +8,12 @@ function Login(props) {
   function loginUser() {
     const password = document.getElementById("loginPassword").value;
     const email = document.getElementById("loginEmail").value;
+
+    if (!password || !email) {
+      alert("Please fill all the fields");
+      return;
+    }
+
     fetch("/loginUser", {
       method: "POST",
       body: JSON.stringify({
@@ -19,8 +25,9 @@ function Login(props) {
       .then((res) => res.text())
       .then((data) => {
         if (data === "Login successful") {
-          cookies.set("loggedInUserEmail",email);
+          cookies.set("loggedInUserEmail", email);
           props.setLoginState(0);
+          props.setAppState(2);
           // console.log("Loggin in user: "+props.username);
         } else {
           alert(data);
@@ -31,21 +38,24 @@ function Login(props) {
   return (
     <div className="card reg-log-card mx-auto">
       <div className="card-body">
-        <label htmlFor="loginEmail">Enter email</label>
+        <label htmlFor="loginEmail">Email</label>
         <br></br>
-        <input id="loginEmail" />
+        <input className="form-control" id="loginEmail" />
         <br></br>
+        <label htmlFor="loginPassword">Password</label>
         <br></br>
-        <label htmlFor="loginPassword">Enter Password</label>
+        <input className="form-control" id="loginPassword" />
         <br></br>
-        <input id="loginPassword" />
-        <br></br>
-        <br></br>
-        <button className="reg-log-button" onClick={loginUser}>Login</button>
-        <br /><br />
-        <p className="reg-log-link" onClick={showRegisterPage}>
-          Want to register?
-        </p>
+
+        <div className="right-ended-div">
+          <button className="btn btn-warning" onClick={loginUser}>
+            Login
+          </button>
+          <br /><br />
+          <p className="reg-log-link" onClick={showRegisterPage}>
+            Want to register?
+          </p>
+        </div>
       </div>
     </div>
   );
