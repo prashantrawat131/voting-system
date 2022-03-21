@@ -3,11 +3,14 @@ const app = express();
 const path = require("path");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const dotenv=require("dotenv");
 
+dotenv.config();
 const PORT = process.env.PORT || 3001;
 
 // setting up mongoose
-mongoose.connect("mongodb://localhost/votingDB");
+// mongoose.connect("mongodb://localhost/votingDB");
+mongoose.connect(process.env.MONGODB_URL);
 const Schema = mongoose.Schema;
 
 // creating user schema
