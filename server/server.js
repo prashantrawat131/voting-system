@@ -3,9 +3,10 @@ const app = express();
 const path = require("path");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const dotenv=require("dotenv");
+const dotenv = require("dotenv");
 
-dotenv.config();
+dotenv.config({ path: "../env" });
+console.log(process.env.MONGODB_URL);
 const PORT = process.env.PORT || 3001;
 
 // setting up mongoose
