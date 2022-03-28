@@ -60,6 +60,7 @@ label {
 }
 
 .option {
+  border-radius: 2%;
   text-align: start;
 }
 
@@ -76,7 +77,7 @@ label {
 .poll {
   width: 30%;
   margin: 5%;
-  background-color: var(--c2);
+  /* background-color: var(--c2); */
 }
 
 .percent-div{

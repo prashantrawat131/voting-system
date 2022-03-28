@@ -10,8 +10,8 @@ console.log(process.env.MONGODB_URL);
 const PORT = process.env.PORT || 3001;
 
 // setting up mongoose
-// mongoose.connect("mongodb://localhost/votingDB");
-mongoose.connect(process.env.MONGODB_URL);
+mongoose.connect("mongodb://localhost/votingDB");
+// mongoose.connect(process.env.MONGODB_URL);
 const Schema = mongoose.Schema;
 
 // creating user schema
@@ -149,11 +149,12 @@ app.get("/getPolls", function (req, res) {
 app.post("/vote", function (req, res) {
   const { voter_email, poll_id, optionNumber, lastSelectedOptionNumber } =
     req.body;
-
+  console.log("Last selected: " + lastSelectedOptionNumber);
   Poll.findById(poll_id, function (err, poll) {
     if (err) {
       res.send({ message: "Voting error" });
     } else {
+      //increasing new selected poll votes
       var update = {
         option1_votes:
           optionNumber === 1 ? poll.option1_votes + 1 : poll.option1_votes,
@@ -165,6 +166,8 @@ app.post("/vote", function (req, res) {
           optionNumber === 4 ? poll.option4_votes + 1 : poll.option4_votes,
       };
 
+      //descreasing previous selected poll votes
+      //in case of first vote for a person it is -1 so no effect on any vote
       var update = {
         option1_votes:
           lastSelectedOptionNumber === 1
@@ -184,29 +187,12 @@ app.post("/vote", function (req, res) {
             : update.option4_votes,
       };
 
-      // if (optionNumber === 1) {
-      //   update = { option1_votes: poll.option1_votes + 1 };
-      // } else if (optionNumber === 2) {
-      //   update = { option2_votes: poll.option2_votes + 1 };
-      // } else if (optionNumber === 3) {
-      //   update = { option3_votes: poll.option3_votes + 1 };
-      // } else {
-      //   update = { option4_votes: poll.option4_votes + 1 };
-      // }
-
       //updating poll
       Poll.findByIdAndUpdate(
         poll._id,
         update,
         { new: true },
-        function (err, doc, result) {
-          if (err) {
-            // console.log("Poll update unsuccessful\rErr:" + err);
-          } else {
-            // console.log("Poll update successfull");
-            // console.log("Doc: " + doc);
-          }
-        }
+        function (err, doc, result) {}
       );
 
       //deleting previous vote
@@ -216,13 +202,7 @@ app.post("/vote", function (req, res) {
             voter_email: voter_email,
             poll_id: poll_id,
           },
-          function (err) {
-            if (err) {
-              console.log("Error deleting vote: " + err);
-            } else {
-              console.log("Vote deleted successfully");
-            }
-          }
+          function (err, doc, res) {}
         );
       } catch (e) {}
 

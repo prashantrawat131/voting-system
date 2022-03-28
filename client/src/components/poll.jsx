@@ -1,33 +1,50 @@
 import { useState } from "react";
+import { PieChart, Pie, Cell } from "recharts";
 
 function Poll(props) {
   const [selected, setSelected] = useState(-1);
   const style = { backgroundColor: "green" };
   const noStyle = {};
   const pollCreationDate = new Date(props.pollData.date);
-  const [percents, setPercents] = useState([-1, -1, -1, -1]);
-
-  function getPercent(o1, o2, o3, o4) {
-    return (o1 / (o1 + o2 + o3 + o4)) * 100;
-  }
-
-  function calculatePercentages() {
-    const { option1_votes, option2_votes, option3_votes, option4_votes } =
-      props.pollData;
-    const o1 = Number.parseFloat(option1_votes);
-    const o2 = Number.parseFloat(option2_votes);
-    const o3 = Number.parseFloat(option3_votes);
-    const o4 = Number.parseFloat(option4_votes);
-    const newPercents = [
-      getPercent(o1, o2, o3, o4),
-      getPercent(o2, o1, o3, o4),
-      getPercent(o2, o2, o1, o4),
-      getPercent(o4, o2, o3, o1),
-    ];
-    setPercents(newPercents);
-  }
+  const [pollState, setPollState] = useState(0);
 
   // calculatePercentages();
+
+  const data = [
+    { name: "Group A", value: props.pollData.option1_votes },
+    { name: "Group B", value: props.pollData.option2_votes },
+    { name: "Group C", value: props.pollData.option3_votes },
+    { name: "Group D", value: props.pollData.option4_votes },
+  ];
+
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+
+  const RADIAN = Math.PI / 180;
+  const renderCustomizedLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+    index,
+  }) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={x > cx ? "start" : "end"}
+        dominantBaseline="central"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
 
   function getSelected() {
     const url =
@@ -63,86 +80,156 @@ function Poll(props) {
       .then((res) => res.json())
       .then((data) => {
         props.refreshPoll(poll_id);
-        calculatePercentages();
       });
   }
 
   return (
     <div className="card mx-auto poll">
       <div className="card-body">
-        <div className="container poll-div">
-          <div className="row poll-creator-name-div">
-            <div className="col">{props.pollData.creator}</div>
-            <div className="col">
-              <div className="date-div">
-              Date: {pollCreationDate.getDate()}/{pollCreationDate.getMonth()}/
-              {pollCreationDate.getFullYear()}
-              </div>
-              <div className="time-div">
-                Time: {pollCreationDate.getHours()}:
-                {pollCreationDate.getMinutes()}
+        <div className="row">
+          <div hidden={pollState !== 0} className="col-6 container poll-div">
+            <div className="row poll-creator-name-div">
+              <div className="col">{props.pollData.creator}</div>
+              <div className="col">
+                <div className="date-div">
+                  Date: {pollCreationDate.getDate()}/
+                  {pollCreationDate.getMonth()}/{pollCreationDate.getFullYear()}
+                </div>
+                <div className="time-div">
+                  Time: {pollCreationDate.getHours()}:
+                  {pollCreationDate.getMinutes()}
+                </div>
               </div>
             </div>
-          </div>
-          <hr />
-          <div className="row">
-            <p>{props.pollData.poll_title}</p>
-          </div>
-          <div className="row">
-              <div  className="col option"
+            <hr />
+            <div className="row">
+              <p>{props.pollData.poll_title}</p>
+            </div>
+            <div className="row">
+              <div
+                className="col option"
                 style={selected === 1 ? style : noStyle}
                 onClick={() => optionClicked(props.pollData._id, 1)}
               >
-              {props.pollData.option1}</div>
+                {props.pollData.option1}
+              </div>
               {/* <div className="percent-div">{percents[0]}</div> */}
 
-            <div
-              className="col option"
-              style={selected === 2 ? style : noStyle}
-              onClick={() => optionClicked(props.pollData._id, 2)}
-            >
-              {props.pollData.option2}
+              <div
+                className="col option"
+                style={selected === 2 ? style : noStyle}
+                onClick={() => optionClicked(props.pollData._id, 2)}
+              >
+                {props.pollData.option2}
+              </div>
+            </div>
+            <div className="row">
+              <div
+                className="col option"
+                style={selected === 3 ? style : noStyle}
+                onClick={() => optionClicked(props.pollData._id, 3)}
+              >
+                {props.pollData.option3}
+              </div>
+              <div
+                className="col option"
+                style={selected === 4 ? style : noStyle}
+                onClick={() => optionClicked(props.pollData._id, 4)}
+              >
+                {props.pollData.option4}
+              </div>
             </div>
           </div>
-          <div className="row">
-            <div
-              className="col option"
-              style={selected === 3 ? style : noStyle}
-              onClick={() => optionClicked(props.pollData._id, 3)}
-            >
-              {props.pollData.option3}
-            </div>
-            <div
-              className="col option"
-              style={selected === 4 ? style : noStyle}
-              onClick={() => optionClicked(props.pollData._id, 4)}
-            >
-              {props.pollData.option4}
+          {/* <hr style={{ height: "2px" }} /> */}
+          <div hidden={pollState !== 1} className="col-6 graph-div">
+            <PieChart width={400} height={400}>
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                label={renderCustomizedLabel}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {data.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+            </PieChart>
+            <div className="container-fluid">
+              <div className="row">
+                <input
+                  className="col-2"
+                  id="option1color"
+                  type={"color"}
+                  value={COLORS[0]}
+                  disabled={true}
+                />
+                <label
+                  style={{ color: "black" }}
+                  className="col-6"
+                  htmlFor="option1color"
+                >
+                  Option A
+                </label>
+              </div>
+
+              <div className="row">
+                <input
+                  className="col-2"
+                  id="option2color"
+                  type={"color"}
+                  value={COLORS[1]}
+                  disabled={true}
+                />
+                <label
+                  style={{ color: "black" }}
+                  className="col-6"
+                  htmlFor="option2color"
+                >
+                  Option B
+                </label>
+              </div>
+
+              <div className="row">
+                <input
+                  className="col-2"
+                  id="option3color"
+                  type={"color"}
+                  value={COLORS[2]}
+                  disabled={true}
+                />
+                <label
+                  style={{ color: "black" }}
+                  className="col-6"
+                  htmlFor="option3color"
+                >
+                  Option C
+                </label>
+              </div>
+
+              <div className="row">
+                <input
+                  className="col-2"
+                  id="option4color"
+                  type={"color"}
+                  value={COLORS[3]}
+                  disabled={true}
+                />
+                <label
+                  style={{ color: "black" }}
+                  className="col-6"
+                  htmlFor="option4color"
+                >
+                  Option D
+                </label>
+              </div>
             </div>
           </div>
-        </div>
-        <hr style={{ height: "2px" }} />
-        <div className="graph-div">
-          <div className="right-ended-div">
-            <img src="refresh.svg" alt="Refresh button" 
-              onClick={() => props.refreshPoll(props.pollData._id)}
-              className="refresh-button"/>
-          </div>
-          <p>
-            {props.pollData.option1}--{props.pollData.option1_votes}
-          </p>
-
-          <p>
-            {props.pollData.option2}--{props.pollData.option2_votes}
-          </p>
-
-          <p>
-            {props.pollData.option3}--{props.pollData.option3_votes}
-          </p>
-
-          <p>
-            {props.pollData.option4}--{props.pollData.option4_votes}
-          </p>
         </div>
       </div>
     </div>
