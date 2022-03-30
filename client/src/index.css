@@ -33,8 +33,20 @@ code {
   background-color: var(--c2);
 }
 
+.color-label-para{
+  display: inline;
+  vertical-align: top;
+  margin-left: 20px;
+}
+
+.color-input{
+  display: inline;
+}
+
 .date-div,.time-div{
-  font-size: 10px;
+  font-size: 14px;
+  font-family: monospace;
+  margin-left: 20px;
 }
 
 label {
@@ -66,7 +78,7 @@ label {
 
 .option:hover {
   cursor: pointer;
-  background-color: green;
+  border: solid 3px #90EE90;
 }
 
 .option,.percent-div{
@@ -75,7 +87,7 @@ label {
 }
 
 .poll {
-  width: 30%;
+  width: 60%;
   margin: 5%;
   /* background-color: var(--c2); */
 }
@@ -83,6 +95,10 @@ label {
 .percent-div{
   vertical-align: middle;
   display: inline;
+}
+
+.poll-creator-name-div{
+  margin-bottom: 20px;
 }
 
 .reg-log-link {

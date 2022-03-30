@@ -1,50 +1,21 @@
 import { useState } from "react";
-import { PieChart, Pie, Cell } from "recharts";
+import Result from "./result";
+import Option from "./option";
 
 function Poll(props) {
   const [selected, setSelected] = useState(-1);
-  const style = { backgroundColor: "green" };
+  const style = { backgroundColor: "#90EE90" };
   const noStyle = {};
   const pollCreationDate = new Date(props.pollData.date);
-  const [pollState, setPollState] = useState(0);
 
   // calculatePercentages();
 
   const data = [
-    { name: "Group A", value: props.pollData.option1_votes },
-    { name: "Group B", value: props.pollData.option2_votes },
-    { name: "Group C", value: props.pollData.option3_votes },
-    { name: "Group D", value: props.pollData.option4_votes },
+    { name: props.pollData.option1, value: props.pollData.option1_votes },
+    { name: props.pollData.option2, value: props.pollData.option2_votes },
+    { name: props.pollData.option3, value: props.pollData.option3_votes },
+    { name: props.pollData.option4, value: props.pollData.option4_votes },
   ];
-
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-
-  const RADIAN = Math.PI / 180;
-  const renderCustomizedLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-    index,
-  }) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        textAnchor={x > cx ? "start" : "end"}
-        dominantBaseline="central"
-      >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
-  };
 
   function getSelected() {
     const url =
@@ -85,150 +56,43 @@ function Poll(props) {
 
   return (
     <div className="card mx-auto poll">
-      <div className="card-body">
+      <div className="card-body container-fluid poll-div">
+        <div className="row poll-creator-name-div">
+          <div className="col">{props.pollData.creator}</div>
+          <div className="col date-div">
+            {pollCreationDate.getDate()}/{pollCreationDate.getMonth()}/
+            {pollCreationDate.getFullYear()}
+          </div>
+          <div className="col time-div">
+            {pollCreationDate.getHours()}:{pollCreationDate.getMinutes()}
+          </div>
+        </div>
+        <hr />
         <div className="row">
-          <div hidden={pollState !== 0} className="col-6 container poll-div">
-            <div className="row poll-creator-name-div">
-              <div className="col">{props.pollData.creator}</div>
-              <div className="col">
-                <div className="date-div">
-                  Date: {pollCreationDate.getDate()}/
-                  {pollCreationDate.getMonth()}/{pollCreationDate.getFullYear()}
-                </div>
-                <div className="time-div">
-                  Time: {pollCreationDate.getHours()}:
-                  {pollCreationDate.getMinutes()}
-                </div>
-              </div>
-            </div>
-            <hr />
+          <div className="col-6">
             <div className="row">
               <p>{props.pollData.poll_title}</p>
             </div>
             <div className="row">
-              <div
-                className="col option"
-                style={selected === 1 ? style : noStyle}
-                onClick={() => optionClicked(props.pollData._id, 1)}
-              >
-                {props.pollData.option1}
-              </div>
-              {/* <div className="percent-div">{percents[0]}</div> */}
-
-              <div
-                className="col option"
-                style={selected === 2 ? style : noStyle}
-                onClick={() => optionClicked(props.pollData._id, 2)}
-              >
-                {props.pollData.option2}
-              </div>
-            </div>
-            <div className="row">
-              <div
-                className="col option"
-                style={selected === 3 ? style : noStyle}
-                onClick={() => optionClicked(props.pollData._id, 3)}
-              >
-                {props.pollData.option3}
-              </div>
-              <div
-                className="col option"
-                style={selected === 4 ? style : noStyle}
-                onClick={() => optionClicked(props.pollData._id, 4)}
-              >
-                {props.pollData.option4}
+              <div>
+                {data.map((option, index) => {
+                  return (
+                    <Option
+                      poll_id={props.pollData._id}
+                      optionText={option.name}
+                      optionClicked={optionClicked}
+                      style={style}
+                      noStyle={noStyle}
+                      selected={selected}
+                      optionNumber={index + 1}
+                    />
+                  );
+                })}
               </div>
             </div>
           </div>
-          {/* <hr style={{ height: "2px" }} /> */}
-          <div hidden={pollState !== 1} className="col-6 graph-div">
-            <PieChart width={400} height={400}>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                label={renderCustomizedLabel}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {data.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-            </PieChart>
-            <div className="container-fluid">
-              <div className="row">
-                <input
-                  className="col-2"
-                  id="option1color"
-                  type={"color"}
-                  value={COLORS[0]}
-                  disabled={true}
-                />
-                <label
-                  style={{ color: "black" }}
-                  className="col-6"
-                  htmlFor="option1color"
-                >
-                  Option A
-                </label>
-              </div>
-
-              <div className="row">
-                <input
-                  className="col-2"
-                  id="option2color"
-                  type={"color"}
-                  value={COLORS[1]}
-                  disabled={true}
-                />
-                <label
-                  style={{ color: "black" }}
-                  className="col-6"
-                  htmlFor="option2color"
-                >
-                  Option B
-                </label>
-              </div>
-
-              <div className="row">
-                <input
-                  className="col-2"
-                  id="option3color"
-                  type={"color"}
-                  value={COLORS[2]}
-                  disabled={true}
-                />
-                <label
-                  style={{ color: "black" }}
-                  className="col-6"
-                  htmlFor="option3color"
-                >
-                  Option C
-                </label>
-              </div>
-
-              <div className="row">
-                <input
-                  className="col-2"
-                  id="option4color"
-                  type={"color"}
-                  value={COLORS[3]}
-                  disabled={true}
-                />
-                <label
-                  style={{ color: "black" }}
-                  className="col-6"
-                  htmlFor="option4color"
-                >
-                  Option D
-                </label>
-              </div>
-            </div>
+          <div className="col-6">
+            <Result data={data} />
           </div>
         </div>
       </div>
