@@ -11,10 +11,10 @@ function Poll(props) {
   // calculatePercentages();
 
   const data = [
-    { name: props.pollData.option1, value: props.pollData.option1_votes },
-    { name: props.pollData.option2, value: props.pollData.option2_votes },
-    { name: props.pollData.option3, value: props.pollData.option3_votes },
-    { name: props.pollData.option4, value: props.pollData.option4_votes },
+    { name: "Option A", value: props.pollData.option1_votes, text:props.pollData.option1 },
+    { name: "Option B", value: props.pollData.option2_votes, text:props.pollData.option2 }, 
+    { name: "Option C", value: props.pollData.option3_votes, text:props.pollData.option3 },
+    { name: "Option D", value: props.pollData.option4_votes, text:props.pollData.option4 },
   ];
 
   function getSelected() {
@@ -69,7 +69,7 @@ function Poll(props) {
         </div>
         <hr />
         <div className="row">
-          <div className="col-6">
+          <div className="col-lg-6 col-12">
             <div className="row">
               <p>{props.pollData.poll_title}</p>
             </div>
@@ -79,7 +79,7 @@ function Poll(props) {
                   return (
                     <Option
                       poll_id={props.pollData._id}
-                      optionText={option.name}
+                      optionText={option.text}
                       optionClicked={optionClicked}
                       style={style}
                       noStyle={noStyle}
@@ -91,7 +91,7 @@ function Poll(props) {
               </div>
             </div>
           </div>
-          <div className="col-6">
+          <div className="col-lg-6 col-12">
             <Result data={data} />
           </div>
         </div>

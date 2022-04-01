@@ -10,8 +10,8 @@ console.log(process.env.MONGODB_URL);
 const PORT = process.env.PORT || 3001;
 
 // setting up mongoose
-mongoose.connect("mongodb://localhost/votingDB");
-// mongoose.connect(process.env.MONGODB_URL);
+// mongoose.connect("mongodb://localhost/votingDB");
+mongoose.connect(process.env.MONGODB_URL);
 const Schema = mongoose.Schema;
 
 // creating user schema
