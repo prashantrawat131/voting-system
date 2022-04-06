@@ -71,7 +71,7 @@ function Result(props) {
   };
 
   const [state, setState] = useState({
-    activeIndex: 1,
+    activeIndex: 2,
   });
 
   const onPieEnter = (_, index) => {

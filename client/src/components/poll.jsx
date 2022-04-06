@@ -91,7 +91,7 @@ function Poll(props) {
               </div>
             </div>
           </div>
-          <div className="col-lg-6 col-12">
+          <div className="col-lg-6 col-12 result-div">
             <Result data={data} />
           </div>
         </div>

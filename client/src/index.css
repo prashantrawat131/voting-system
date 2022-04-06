@@ -86,6 +86,10 @@ label {
   border: solid 3px #90EE90;
 }
 
+.option_alpha{
+  border: solid 1px black;
+}
+
 .option,.percent-div{
   margin: 2%;
   padding: 1%;
@@ -121,6 +125,7 @@ label {
   width: 20%;
   background-color: var(--c2);
 }
+
 
 .refresh-button{
   background-color: silver;
