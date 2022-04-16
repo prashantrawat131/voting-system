@@ -10,8 +10,8 @@ console.log(process.env.MONGODB_URL);
 const PORT = process.env.PORT || 3001;
 
 // setting up mongoose
-// mongoose.connect("mongodb://localhost/votingDB");
-mongoose.connect(process.env.MONGODB_URL);
+mongoose.connect("mongodb://localhost/votingDB");
+// mongoose.connect(process.env.MONGODB_URL);
 const Schema = mongoose.Schema;
 
 // creating user schema
@@ -28,6 +28,13 @@ const userSchema = new Schema({
   password: { type: String },
 });
 const User = mongoose.model("User", userSchema);
+
+//report schema
+const reportSchema = new Schema({
+  poll_id: { type: String },
+  reporterEmail: { type: String },
+});
+const Report = mongoose.model("Report", reportSchema);
 
 // creating polls schema
 const pollScahema = new Schema({
@@ -279,6 +286,20 @@ app.get("/getPoll", function (req, res) {
       res.send({ message: "Error" });
     } else {
       res.send(poll);
+    }
+  });
+});
+
+app.post("/report", function (req, res) {
+  const { poll_id, reporterEmail } = req.body;
+  // console.log(reporterEmail,poll_id);
+  const report = new Report();
+  report.save();
+  Report.insertMany([{ poll_id, reporterEmail }], function (err, doc) {
+    if (err) {
+      res.send({ message: "Some error occured.Sorry unable to report" });
+    } else {
+      res.send({ message: "Reported successfully" });
     }
   });
 });

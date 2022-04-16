@@ -1,4 +1,5 @@
 import Cookies from "universal-cookie";
+import validator from "validator";
 const cookies = new Cookies();
 function Login(props) {
   function showRegisterPage() {
@@ -11,6 +12,11 @@ function Login(props) {
 
     if (!password || !email) {
       alert("Please fill all the fields");
+      return;
+    }
+
+    if (!validator.isEmail(email)) {
+      alert("Please enter a valid email.");
       return;
     }
 

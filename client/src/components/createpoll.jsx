@@ -39,7 +39,7 @@ function CreatePoll(props) {
     <div className="card mx-auto create-poll-div">
       <div className="card-body">
         <div style={{ textAlign: "end", marginBottom: "10px" }}>
-          <button type="button" class="close" aria-label="Close">
+          <button onClick={close} type="button" class="close" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>

@@ -126,6 +126,10 @@ label {
   background-color: var(--c2);
 }
 
+.result-div{
+  height: 350px;
+}
+
 
 .refresh-button{
   background-color: silver;

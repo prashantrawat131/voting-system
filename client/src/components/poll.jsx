@@ -1,6 +1,9 @@
 import { useState } from "react";
 import Result from "./result";
 import Option from "./option";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 function Poll(props) {
   const [selected, setSelected] = useState(-1);
@@ -11,11 +14,40 @@ function Poll(props) {
   // calculatePercentages();
 
   const data = [
-    { name: "Option A", value: props.pollData.option1_votes, text:props.pollData.option1 },
-    { name: "Option B", value: props.pollData.option2_votes, text:props.pollData.option2 }, 
-    { name: "Option C", value: props.pollData.option3_votes, text:props.pollData.option3 },
-    { name: "Option D", value: props.pollData.option4_votes, text:props.pollData.option4 },
+    {
+      name: "Option A",
+      value: props.pollData.option1_votes,
+      text: props.pollData.option1,
+    },
+    {
+      name: "Option B",
+      value: props.pollData.option2_votes,
+      text: props.pollData.option2,
+    },
+    {
+      name: "Option C",
+      value: props.pollData.option3_votes,
+      text: props.pollData.option3,
+    },
+    {
+      name: "Option D",
+      value: props.pollData.option4_votes,
+      text: props.pollData.option4,
+    },
   ];
+
+  function report() {
+    fetch("/report", {
+      method: "POST",
+      body: JSON.stringify({
+        poll_id: props.pollData._id,
+        reporterEmail: cookies.get("loggedInUserEmail"),
+      }),
+      headers: { "Content-type": "application/json;charset=UTF-8" },
+    })
+      .then((res) => res.json())
+      .then((data) => alert(data.message));
+  }
 
   function getSelected() {
     const url =
@@ -57,7 +89,7 @@ function Poll(props) {
   return (
     <div className="card mx-auto poll">
       <div className="card-body container-fluid poll-div">
-        <div className="row poll-creator-name-div">
+        <div className="row poll-crLong.fromString(props.pollData.option1_votes)eator-name-div">
           <div className="col">{props.pollData.creator}</div>
           <div className="col date-div">
             {pollCreationDate.getDate()}/{pollCreationDate.getMonth()}/
@@ -65,6 +97,12 @@ function Poll(props) {
           </div>
           <div className="col time-div">
             {pollCreationDate.getHours()}:{pollCreationDate.getMinutes()}
+          </div>{" "}
+          <div className="col">
+            Total votes: {Number.parseInt(props.pollData.option1_votes)+Number.parseInt(props.pollData.option2_votes)+Number.parseInt(props.pollData.option3_votes)+Number.parseInt(props.pollData.option4_votes)}
+          </div>
+          <div className="col">
+            <img alt="Report" src="./report.svg" onClick={report} />
           </div>
         </div>
         <hr />
